@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { StyleSheet, Text, View, Button, SafeAreaView, TouchableOpacity } from 'react-native';
 
-// Importa 'Camera' para permissões e 'CameraView' para o componente JSX
 import { Camera, CameraView } from "expo-camera"; 
 import { shareAsync } from "expo-sharing";
 import * as MediaLibrary from "expo-media-library";
@@ -9,7 +8,6 @@ import * as MediaLibrary from "expo-media-library";
 export default function App() {
   const cameraRef = useRef<CameraView>(null);
   const [isRecording, setIsRecording] = useState(false);
-  // O vídeo gravado terá uma propriedade 'uri' que usaremos
   const [video, setVideo] = useState<{ uri: string } | undefined>();
 
   const [hasCameraPermission, setHasCameraPermission] = useState(false);
@@ -18,7 +16,6 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      // Usa o módulo 'Camera' para solicitar as permissões
       const cameraPermission = await Camera.requestCameraPermissionsAsync();
       const microphonePermission = await Camera.requestMicrophonePermissionsAsync();
       const mediaLibraryPermission = await MediaLibrary.requestPermissionsAsync();
@@ -29,7 +26,6 @@ export default function App() {
     })();
   }, []);
 
-  // Funções para controlar a gravação
   const recordVideo = async () => {
     if (!cameraRef.current) return;
     
@@ -54,7 +50,6 @@ export default function App() {
     }
   };
   
-  // Funções para manipular o vídeo após a gravação
   const saveVideo = () => {
     if (video) {
       MediaLibrary.saveToLibraryAsync(video.uri).then(() => {
@@ -76,7 +71,6 @@ export default function App() {
     setVideo(undefined);
   };
   
-  // Renderização condicional baseada nas permissões
   if (hasCameraPermission === false || hasMicrophonePermission === false) {
     return <Text style={styles.text}>App requer permissão de câmera e microfone.</Text>;
   }
@@ -85,13 +79,10 @@ export default function App() {
     return <Text style={styles.text}>App requer permissão da biblioteca de mídias.</Text>;
   }
 
-  // Se um vídeo foi gravado, mostra a tela de pré-visualização
   if (video) {
     return (
       <SafeAreaView style={styles.container}>
         <Text style={styles.text}>Pré-visualização</Text>
-        {/* Aqui você poderia adicionar um componente de player de vídeo */}
-        {/* <Video source={{ uri: video.uri }} /> */}
         <View style={styles.menuButtonContainer}>
           <Button title="Compartilhar" onPress={shareVideo} />
           <Button title="Salvar" onPress={saveVideo} />
@@ -104,14 +95,12 @@ export default function App() {
   // Tela principal da câmera com o botão de gravação
   return (
     <View style={styles.container}>
-      {/* A prop correta para a referência é 'ref' */}
       <CameraView ref={cameraRef} style={styles.camera} facing="back">
         <View style={styles.buttonContainer}>
           <TouchableOpacity 
             style={styles.recordButton} 
             onPress={isRecording ? stopRecording : recordVideo}
           >
-            {/* O estilo deste View muda para criar o efeito de "gravar/parar" */}
             <View style={isRecording ? styles.stopButtonInner : styles.recordButtonInner} />
           </TouchableOpacity>
         </View>
